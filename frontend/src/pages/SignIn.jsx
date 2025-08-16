@@ -2,36 +2,42 @@ import React, { useContext, useState } from "react";
 import bg from "../assets/authBg.png";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { userContext } from "../context/userContext";
-import axios from "axios";
+import { userContext } from "../context/UserContext";
 
+import axios from "axios";
 
 const SignIn = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { serverUrl } = useContext(userContext);
+  const { serverUrl, userData, setUserData } = useContext(userContext);
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSignIn = async (e) => {
     e.preventDefault();
     setError(""); // Reset error message
-    setLoading(true)
+    setLoading(true);
     try {
-      let result = await axios.post(`${serverUrl}api/auth/login`, formData, { withCredentials: true });
-      console.log(result.data);
-      setLoading(false)
+      let result = await axios.post(`${serverUrl}api/auth/login`, formData, {
+        withCredentials: true,
+      });
+      setUserData(result.data);
+      setLoading(false);
+      navigate("/")
     } catch (error) {
       console.log(error);
-      setLoading(false)
-      setError(error.response?.data?.message || "An error occurred during sign up");
+      setUserData(null);
+      setLoading(false);
+      setError(
+        error.response?.data?.message || "An error occurred during sign up"
+      );
     }
-  }
+  };
 
   return (
     <div
@@ -84,7 +90,9 @@ const SignIn = () => {
         </div>
 
         {error.length > 0 && (
-          <p className="text-red-500 text-sm font-medium text-center">{error}</p>
+          <p className="text-red-500 text-sm font-medium text-center">
+            {error}
+          </p>
         )}
 
         {/* Submit Button */}

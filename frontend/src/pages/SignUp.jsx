@@ -2,13 +2,15 @@ import React, { useContext, useState } from "react";
 import bg from "../assets/authBg.png";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { useNavigate } from "react-router-dom";
-import { userContext } from "../context/userContext";
+import { userContext } from "../context/UserContext";
+
 import axios from "axios";
 
 
 const SignUp = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const { serverUrl } = useContext(userContext);
+  const { serverUrl, userData,setUserData } = useContext(userContext);
+  
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -16,8 +18,6 @@ const SignUp = () => {
   });
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false)
-
-
 
   const navigate = useNavigate();
 
@@ -27,10 +27,12 @@ const SignUp = () => {
     setLoading(true)
     try {
       let result = await axios.post(`${serverUrl}api/auth/signup`, formData, { withCredentials: true });
-      console.log(result.data);
+      setUserData(result.data);
       setLoading(false)
+      navigate("/customize")
     } catch (error) {
       console.log(error);
+      setUserData(null);
       setLoading(false)
       setError(error.response?.data?.message || "An error occurred during sign up");
     }

@@ -4,6 +4,7 @@ import connectDB from "./config/db.js";
 import authRoute from "./routes/auth.routers.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import userRouter from "./routes/user.routes.js";
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -20,6 +21,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRoute);
+app.use("/api/user", userRouter);
 
 app.listen(port, () => {
     connectDB();
